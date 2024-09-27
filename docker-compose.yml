@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  nginx:
+    build:
+      context: ./production/nginx
+      dockerfile: Dockerfile
+    container_name: Kshup_nginx
+    hostname: nginx
+    networks:
+      - kshupnet
+    ports:
+      - "80:80"
+      - "443:443"
+    env_file:
+      - .env
+    command: /bin/bash -c "envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+    depends_on:
+      - app
+      - www
+    volumes:
+      - ./production/nginx/certs:/etc/letsencrypt/live/kshup.com
+
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: Kshup_app
+    hostname: app
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./app:/usr/app/
+      - /usr/app/node_modules
+    networks:
+      - kshupnet
+    env_file:
+      - .env
+
+  www:
+    build:
+      context: ./www
+      dockerfile: Dockerfile
+    container_name: Kshup_www
+    hostname: www
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./www:/usr/www/
+      - /usr/www/node_modules
+    networks:
+      - kshupnet
+    env_file:
+      - .env
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./production/nginx/certs:/etc/letsencrypt/live/kshup.com
+    entrypoint: "/bin/sh -c 'while :; do certbot renew; sleep 12h; done'"
+
+networks:
+  kshupnet:
+    driver: bridge

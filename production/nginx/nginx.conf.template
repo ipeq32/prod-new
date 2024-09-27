@@ -1,0 +1,78 @@
+worker_processes  auto;
+
+events {
+  worker_connections  1024;
+}
+
+http {
+  include /etc/nginx/mime.types;
+
+  gzip on;
+  gzip_comp_level 3;
+  gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+  client_max_body_size 0;
+
+  server {
+    listen 80 default_server;
+    server_name _;
+    return 301 https://$host$request_uri;
+  }
+
+  server {
+    listen       80;
+    server_name  kshup.com;
+    return       301 https://www.kshup.com$request_uri;
+  }
+
+  server {
+    listen 443 ssl;
+    server_name  kshup.com;
+
+    ssl_certificate     /etc/nginx/certs/kshup.com.crt;
+    ssl_certificate_key /etc/nginx/certs/kshup.com.key;
+
+    return 301 https://www.kshup.com$request_uri;
+  }
+
+  server {
+    listen 443 ssl;
+    server_name deneme.kshup.com;
+
+    ssl_certificate     /etc/nginx/certs/kshup.com.crt;
+    ssl_certificate_key /etc/nginx/certs/kshup.com.key;
+
+    location / {
+      proxy_pass http://app:80;
+
+      proxy_set_header Host ${NGINX_DOLLAR}host;
+      proxy_set_header X-Real-IP ${NGINX_DOLLAR}remote_addr;
+      proxy_set_header X-Forwarded-Proto ${NGINX_DOLLAR}scheme;
+      proxy_set_header X-Forwarded-For ${NGINX_DOLLAR}proxy_add_x_forwarded_for;
+
+      proxy_http_version 1.1;
+      proxy_set_header Upgrade ${NGINX_DOLLAR}http_upgrade;
+      proxy_set_header Connection "upgrade";
+    }
+  }
+
+  server {
+    listen 443 ssl;
+    server_name www.kshup.com;
+
+    ssl_certificate     /etc/nginx/certs/kshup.com.crt;
+    ssl_certificate_key /etc/nginx/certs/kshup.com.key;
+
+    location / {
+      proxy_pass http://www:80;
+
+      proxy_set_header Host ${NGINX_DOLLAR}host;
+      proxy_set_header X-Real-IP ${NGINX_DOLLAR}remote_addr;
+      proxy_set_header X-Forwarded-Proto ${NGINX_DOLLAR}scheme;
+      proxy_set_header X-Forwarded-For ${NGINX_DOLLAR}proxy_add_x_forwarded_for;
+
+      proxy_http_version 1.1;
+      proxy_set_header Upgrade ${NGINX_DOLLAR}http_upgrade;
+      proxy_set_header Connection "upgrade";
+    }
+  }
+}
