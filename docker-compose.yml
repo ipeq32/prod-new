@@ -20,6 +20,8 @@ services:
       - www
     volumes:
       - ./production/nginx/certs:/etc/letsencrypt/live/kshup.com
+      - ./production/nginx/letsencrypt:/etc/letsencrypt
+      - ./production/nginx/www:/var/www/certbot  # Sertifika challenge'ları için
 
   app:
     build:
@@ -55,9 +57,15 @@ services:
 
   certbot:
     image: certbot/certbot
+    container_name: Kshup_certbot
+    hostname: certbot
+    networks:
+      - kshupnet
     volumes:
       - ./production/nginx/certs:/etc/letsencrypt/live/kshup.com
-    entrypoint: "/bin/sh -c 'while :; do certbot renew; sleep 12h; done'"
+      - ./production/nginx/letsencrypt:/etc/letsencrypt  # Let's Encrypt volume
+      - ./production/nginx/www:/var/www/certbot  # Challenge dosyaları için
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot; sleep 12h; done'"
 
 networks:
   kshupnet:
