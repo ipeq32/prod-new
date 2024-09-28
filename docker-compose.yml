@@ -64,8 +64,10 @@ services:
       - ./production/nginx/certs:/etc/letsencrypt/live/kshup.com
       - ./production/nginx/letsencrypt:/etc/letsencrypt  # Let's Encrypt volume
       - ./production/nginx/www:/var/www/certbot  # Challenge dosyaları için
-    command: certonly --webroot -w /var/www/certbot -d kshup.com -d www.kshup.com -d deneme.kshup.com --non-interactive --agree-tos --email tnhnipek@gmail.com
-    entrypoint: "/bin/sh -c 'trap exit TERM; certbot renew --webroot -w /var/www/certbot; sleep 12h; while :; do certbot renew --webroot -w /var/www/certbot; sleep 12h; done'"
+    # command: certonly --webroot -w /var/www/certbot -d kshup.com -d www.kshup.com -d deneme.kshup.com --non-interactive --agree-tos --email tnhnipek@gmail.com
+    # entrypoint: "/bin/sh -c 'trap exit TERM; certbot renew --webroot -w /var/www/certbot; sleep 12h; while :; do certbot renew --webroot -w /var/www/certbot; sleep 12h; done'"
+    entrypoint: "/bin/sh -c 'trap exit TERM; certbot certonly --webroot -w /var/www/certbot -d kshup.com -d www.kshup.com -d deneme.kshup.com --non-interactive --agree-tos --email tnhnipek@gmail.com; sleep 12h; while :; do certbot renew --webroot -w /var/www/certbot; sleep 12h; done'"
+
 
 networks:
   kshupnet:
