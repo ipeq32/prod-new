@@ -6,6 +6,7 @@ if [ ! -x "$0" ]; then
 fi
 
 CERTS_DIR="./production/nginx/certs"
+WEBROOT_DIR="./production/www"
 
 # Sertifika dizinini oluştur
 if [ ! -d "$CERTS_DIR" ]; then
@@ -15,13 +16,14 @@ else
     echo "Dizin zaten mevcut: $CERTS_DIR"
 fi
 
-# Geçerli bir SSL sertifikası almak için Certbot'u çalıştır
+# Geçerli bir SSL sertifikası almak için Certbot'u webroot ile çalıştır
 docker run -it --rm \
     -v "$CERTS_DIR:/etc/letsencrypt/live/kshup.com" \
+    -v "$WEBROOT_DIR:/var/www/certbot" \
     certbot/certbot certonly \
-    --standalone \
-    --preferred-challenges http \
-    -d kshup.com -d www.kshup.com \
+    --webroot \
+    --webroot-path /var/www/certbot \
+    -d kshup.com -d www.kshup.com -d deneme.kshup.com \
     --non-interactive --agree-tos \
     --email tnhnipek@gmail.com
 
