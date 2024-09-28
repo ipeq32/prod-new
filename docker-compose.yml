@@ -18,7 +18,6 @@ services:
     depends_on:
       - app
       - www
-      - certbot
     volumes:
       - ./production/nginx/certs:/etc/letsencrypt/live/kshup.com
       - ./production/nginx/letsencrypt:/etc/letsencrypt
@@ -62,6 +61,8 @@ services:
     hostname: certbot
     networks:
       - kshupnet
+    depends_on:
+      - nginx
     volumes:
       - ./production/nginx/certs:/etc/letsencrypt/live/kshup.com
       - ./production/nginx/letsencrypt:/etc/letsencrypt  # Let's Encrypt volume
