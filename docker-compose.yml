@@ -18,8 +18,7 @@ services:
       - www
       - certbot
     volumes:
-      - ./production/nginx/certs:/etc/letsencrypt/live/kshup.com
-      - ./production/nginx/letsencrypt:/etc/letsencrypt
+      - ./production/nginx/certs:/etc/nginx/certs
       - ./production/nginx/www:/var/www/certbot  # Sertifika challenge'ları için
 
   app:
@@ -57,7 +56,7 @@ services:
   certbot:
     image: certbot/certbot
     container_name: Kshup_certbot
-    hostname: certbot
+    # hostname: certbot
     networks:
       - kshupnet
     volumes:
