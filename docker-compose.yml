@@ -12,14 +12,15 @@ services:
       - "443:443"
     env_file:
       - .env
-    command: /bin/bash -c "envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+    command: /bin/bash -c "envsubst < /etc/nginx/templates/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
     depends_on:
       - app
       - www
       - certbot
     volumes:
-      - ./production/nginx/certs:/etc/nginx/certs
-      - ./production/nginx/www:/var/www/certbot  # Sertifika challenge'ları için
+      - ./production/nginx/certs:/etc/nginx/certs  # Sertifikalar Nginx tarafından buradan okunacak
+      - ./production/nginx/www:/var/www/certbot  # Let's Encrypt challenge dosyaları için
+      - ./production/nginx/letsencrypt:/etc/letsencrypt  # Certbot dosyaları için
 
   app:
     build:
@@ -56,17 +57,14 @@ services:
   certbot:
     image: certbot/certbot
     container_name: Kshup_certbot
-    # hostname: certbot
+    hostname: certbot
     networks:
       - kshupnet
     volumes:
-      - ./production/nginx/certs:/etc/letsencrypt/live/kshup.com
-      - ./production/nginx/letsencrypt:/etc/letsencrypt  # Let's Encrypt volume
+      - ./production/nginx/certs:/etc/letsencrypt/live/kshup.com  # Sertifikaların oluşturulacağı ve yenileneceği yer
       - ./production/nginx/www:/var/www/certbot  # Challenge dosyaları için
-    # command: certonly --webroot -w /var/www/certbot -d kshup.com -d www.kshup.com -d deneme.kshup.com --non-interactive --agree-tos --email tnhnipek@gmail.com
-    # entrypoint: "/bin/sh -c 'trap exit TERM; certbot renew --webroot -w /var/www/certbot; sleep 12h; while :; do certbot renew --webroot -w /var/www/certbot; sleep 12h; done'"
+      - ./production/nginx/letsencrypt:/etc/letsencrypt  # Let's Encrypt volume
     entrypoint: "/bin/sh -c 'trap exit TERM; certbot certonly --webroot -w /var/www/certbot -d kshup.com -d www.kshup.com -d deneme.kshup.com --non-interactive --agree-tos --email tnhnipek@gmail.com; sleep 12h; while :; do certbot renew --webroot -w /var/www/certbot; sleep 12h; done'"
-
 
 networks:
   kshupnet:
