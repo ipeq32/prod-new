@@ -16,6 +16,10 @@ http {
     listen 80 default_server;
     server_name _;
 
+    location /.well-known/acme-challenge/ {
+      root /var/www/certbot;
+    }
+
     location / {
       return 301 https://$host$request_uri;
     }
@@ -24,7 +28,14 @@ http {
   server {
     listen       80;
     server_name  kshup.com;
-    return       301 https://www.kshup.com$request_uri;
+    
+    location /.well-known/acme-challenge/ {
+      root /var/www/certbot;
+    }
+
+    location / {
+      return 301 https://$host$request_uri;
+    }
   }
 
   server {
@@ -33,10 +44,6 @@ http {
 
     ssl_certificate     /etc/nginx/certs/kshup.com.crt;
     ssl_certificate_key /etc/nginx/certs/kshup.com.key;
-
-    location /.well-known/acme-challenge/ {
-      root /var/www/certbot;
-    }
 
     return 301 https://www.kshup.com$request_uri;
   }
@@ -47,10 +54,6 @@ http {
 
     ssl_certificate     /etc/nginx/certs/kshup.com.crt;
     ssl_certificate_key /etc/nginx/certs/kshup.com.key;
-
-    location /.well-known/acme-challenge/ {
-      root /var/www/certbot;
-    }
 
     location / {
       proxy_pass http://www:80;
@@ -72,10 +75,6 @@ http {
 
     ssl_certificate     /etc/nginx/certs/kshup.com.crt;
     ssl_certificate_key /etc/nginx/certs/kshup.com.key;
-
-    location /.well-known/acme-challenge/ {
-      root /var/www/certbot;
-    }
 
     location / {
       proxy_pass http://app:80;
