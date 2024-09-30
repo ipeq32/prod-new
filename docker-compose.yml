@@ -31,41 +31,41 @@ services:
       - ./production/nginx/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; certbot certonly --webroot -w /var/www/certbot -d kshup.com --non-interactive --agree-tos --email tnhnipek@gmail.com; sleep 12h; while :; do certbot renew --webroot -w /var/www/certbot; sleep 12h; done'"
 
-  app:
-    build:
-      context: ./app
-      dockerfile: Dockerfile
-    container_name: Kshup_app
-    hostname: app
-    depends_on:
-      - certbot
-    environment:
-      - NODE_ENV=production
-    volumes:
-      - ./app:/usr/app/
-      - /usr/app/node_modules
-    networks:
-      - kshupnet
-    env_file:
-      - .env
+  # app:
+  #   build:
+  #     context: ./app
+  #     dockerfile: Dockerfile
+  #   container_name: Kshup_app
+  #   hostname: app
+  #   depends_on:
+  #     - certbot
+  #   environment:
+  #     - NODE_ENV=production
+  #   volumes:
+  #     - ./app:/usr/app/
+  #     - /usr/app/node_modules
+  #   networks:
+  #     - kshupnet
+  #   env_file:
+  #     - .env
 
-  www:
-    build:
-      context: ./www
-      dockerfile: Dockerfile
-    container_name: Kshup_www
-    hostname: www
-    depends_on:
-      - certbot # certbot 80 portunu dinlemesi gerekiyor. şimdilik böyle çözdüm. ama ilerde docker içinde sertifika yenileme işlemini bu port kullanılırken nasıl yapacak kapatmak düşünülebilir.
-    environment:
-      - NODE_ENV=production
-    volumes:
-      - ./www:/usr/www/
-      - /usr/www/node_modules
-    networks:
-      - kshupnet
-    env_file:
-      - .env
+  # www:
+  #   build:
+  #     context: ./www
+  #     dockerfile: Dockerfile
+  #   container_name: Kshup_www
+  #   hostname: www
+  #   depends_on:
+  #     - certbot # certbot 80 portunu dinlemesi gerekiyor. şimdilik böyle çözdüm. ama ilerde docker içinde sertifika yenileme işlemini bu port kullanılırken nasıl yapacak kapatmak düşünülebilir.
+  #   environment:
+  #     - NODE_ENV=production
+  #   volumes:
+  #     - ./www:/usr/www/
+  #     - /usr/www/node_modules
+  #   networks:
+  #     - kshupnet
+  #   env_file:
+  #     - .env
 
 networks:
   kshupnet:
