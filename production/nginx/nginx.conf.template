@@ -12,11 +12,11 @@ http {
   gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
   client_max_body_size 0;
 
- server {
+  server {
     listen 80 default_server;
     server_name _;
 
-    location /.well-known/acme-challenge/ {
+    location ~ /.well-known/acme-challenge/ {
       root /var/www/certbot;
     }
 

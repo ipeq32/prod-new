@@ -6,7 +6,7 @@ if [ ! -x "$0" ]; then
 fi
 
 CERTS_DIR="./production/nginx/certs"
-WEBROOT_DIR="./production/www"
+WEBROOT_DIR="./production/nginx/www"
 
 # Sertifika dizinini oluştur
 if [ ! -d "$CERTS_DIR" ]; then
