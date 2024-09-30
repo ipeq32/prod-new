@@ -20,6 +20,17 @@ services:
     volumes:
       - ./production/nginx/certs:/etc/nginx/certs
       - ./production/nginx/www:/var/www/certbot
+  
+  certbot:
+    image: certbot/certbot
+    container_name: Kshup_certbot
+    hostname: certbot
+    networks:
+      - kshupnet
+    volumes:
+      - ./production/nginx/certs:/etc/letsencrypt/live/kshup.com
+      - ./production/nginx/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; certbot certonly --webroot -w /var/www/certbot -d kshup.com -d www.kshup.com -d deneme.kshup.com --non-interactive --agree-tos --email tnhnipek@gmail.com; sleep 12h; while :; do certbot renew --webroot -w /var/www/certbot; sleep 12h; done'"
 
   app:
     build:
@@ -52,17 +63,6 @@ services:
       - kshupnet
     env_file:
       - .env
-
-  certbot:
-    image: certbot/certbot
-    container_name: Kshup_certbot
-    hostname: certbot
-    networks:
-      - kshupnet
-    volumes:
-      - ./production/nginx/certs:/etc/letsencrypt/live/kshup.com
-      - ./production/nginx/www:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; certbot certonly --webroot -w /var/www/certbot -d kshup.com -d www.kshup.com -d deneme.kshup.com --non-interactive --agree-tos --email tnhnipek@gmail.com; sleep 12h; while :; do certbot renew --webroot -w /var/www/certbot; sleep 12h; done'"
 
 networks:
   kshupnet:
