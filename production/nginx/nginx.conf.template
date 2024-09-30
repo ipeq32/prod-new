@@ -52,7 +52,7 @@ http {
     ssl_certificate_key /etc/nginx/certs/kshup.com.key;
 
     location / {
-      proxy_pass http://127.0.0.1:80;
+      proxy_pass http://www:80;
 
       proxy_set_header Host ${NGINX_DOLLAR}host;
       proxy_set_header X-Real-IP ${NGINX_DOLLAR}remote_addr;
@@ -73,7 +73,7 @@ http {
     ssl_certificate_key /etc/nginx/certs/kshup.com.key;
 
     location / {
-      proxy_pass http://127.0.0.1:80;
+      proxy_pass http://app:80;
 
       proxy_set_header Host ${NGINX_DOLLAR}host;
       proxy_set_header X-Real-IP ${NGINX_DOLLAR}remote_addr;
