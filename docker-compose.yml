@@ -14,9 +14,9 @@ services:
       - .env
     command: /bin/bash -c "envsubst < /etc/nginx/templates/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
     depends_on:
+      - certbot
       - app
       - www
-      - certbot
     volumes:
       - ./production/nginx/certs:/etc/nginx/certs
       - ./production/nginx/www:/var/www/certbot
